@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
+import { toast } from "sonner";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -38,8 +40,10 @@ const Auth = () => {
       token: data.token,
       user: data.user,
     });
-
-    navigate("/");
+    toast.success("Login Successful 🎉");
+    setTimeout(() => {
+      navigate("/");
+    }, 1500);
   };
 
   return (
@@ -74,15 +78,33 @@ const Auth = () => {
             required
           />
 
-          <input
-            type="password"
-            placeholder="Password"
-            className="border w-full px-3 py-2"
-            onChange={(e) =>
-              setForm({ ...form, password: e.target.value })
-            }
-            required
-          />
+          {/* Password with Show Button */}
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              className="border w-full px-3 py-2 pr-12"
+              onChange={(e) =>
+                setForm({ ...form, password: e.target.value })
+              }
+              required
+            />
+
+            <button
+              type="button"
+              className="absolute right-3 top-2 text-sm text-gray-600"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
+
+          {/* Forgot Password (Only Login) */}
+          {isLogin && (
+            <p className="text-right text-sm text-blue-600 cursor-pointer hover:underline">
+              Forgot Password?
+            </p>
+          )}
 
           <button
             type="submit"

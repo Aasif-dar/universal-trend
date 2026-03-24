@@ -1,29 +1,29 @@
 const adminCategories = {
   men: [
-    "Jeans",
+    "All",
     "Shirts",
     "Tshirts",
     "Jackets",
+    "Jeans",
+    "Uppers",
     "Shorts",
     "Shoes",
     "Accessories",
   ],
-
   women: [
-    "Kurti",
-    "Sweaters",
+    "All",
+    "Kurtis",
+    "Dresses",
     "Bags",
     "Shoes",
-    "Pakistani Suits",
-    "Shawls",
-    "Scarfs",
+    "Scarves",
+    "Sarees",
   ],
-
   fragrances: [
-    "Attars",
+      "All",
     "Perfumes",
+    "Attars",
     "Deodorants",
-    "Attar Deodorants",
   ],
 };
 

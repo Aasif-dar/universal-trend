@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    // ❌ DO NOT clear cart here
   };
 
   return (

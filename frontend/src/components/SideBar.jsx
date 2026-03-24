@@ -2,12 +2,21 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../Context/AuthContext";
 
+import {
+  FiUser,
+  FiShoppingBag,
+  FiPackage,
+  FiLogOut,
+  FiShoppingCart,
+  FiGrid,
+} from "react-icons/fi";
+
 const SideBar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
 
-  const [view, setView] = useState("menu"); // menu | profile
+  const [view, setView] = useState("menu");
   const isAdmin = user?.user?.role === "admin";
 
   const goTo = (path) => {
@@ -15,22 +24,16 @@ const SideBar = ({ isOpen, onClose }) => {
     onClose();
   };
 
-  // Disable scroll when sidebar open
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
     return () => (document.body.style.overflow = "auto");
   }, [isOpen]);
 
-  // Reset view when closed
-  useEffect(() => {
-    if (!isOpen) setView("menu");
-  }, [isOpen]);
-
   const linkClass = (path) =>
-    `px-3 py-2 rounded cursor-pointer transition ${
+    `flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition ${
       location.pathname === path
         ? "bg-black text-white"
-        : "hover:bg-gray-100"
+        : "hover:bg-gray-100 text-gray-700"
     }`;
 
   return (
@@ -38,167 +41,147 @@ const SideBar = ({ isOpen, onClose }) => {
       {/* Overlay */}
       <div
         onClick={onClose}
-        className={`absolute inset-0 bg-black/50 transition-opacity ${
+        className={`absolute inset-0 bg-black/40 transition-opacity ${
           isOpen ? "opacity-100" : "opacity-0"
         }`}
       />
 
       {/* Sidebar */}
       <aside
-        className={`absolute left-0 top-0 h-full w-72 bg-white shadow-xl
-        transform transition-transform duration-300
-        ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`absolute left-0 top-0 h-full w-72 bg-white shadow-2xl transform transition-transform duration-300 flex flex-col ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
-        {/* HEADER */}
-        <div className="px-6 py-4 border-b flex items-center justify-between">
+        {/* Header */}
+        <div className="px-6 py-5 border-b flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-bold">
+            {user ? user?.user?.name?.charAt(0) : "G"}
+          </div>
+
           <div>
-            <p className="text-xs tracking-widest uppercase text-gray-400">
-              {user ? "Welcome" : "Hello"}
+            <p className="text-xs text-gray-400 uppercase tracking-wider">
+              Welcome
             </p>
             <p className="font-semibold">
               {user ? user.user.name : "Guest"}
             </p>
           </div>
-
-          {view === "profile" && (
-            <button
-              onClick={() => setView("menu")}
-              className="text-sm underline"
-            >
-              Back
-            </button>
-          )}
         </div>
 
-        {/* BODY */}
-        <nav className="px-6 py-6 space-y-8 text-sm font-medium">
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto px-6 py-6 space-y-8 text-sm font-medium">
 
-          {/* PROFILE VIEW */}
-          {view === "profile" && user && (
-            <div className="space-y-6">
-              <div>
-                <p className="text-xs text-gray-400 mb-1">Name</p>
-                <p>{user.user.name}</p>
-              </div>
+          {/* Shop */}
+          <div>
+            <p className="text-xs text-gray-400 uppercase mb-3">Shop</p>
 
-              <div>
-                <p className="text-xs text-gray-400 mb-1">Email</p>
-                <p>{user.user.email}</p>
-              </div>
+            <ul className="space-y-1">
+              <li onClick={() => goTo("/men")} className={linkClass("/men")}>
+                <FiShoppingBag /> Men
+              </li>
 
-              <button
-                onClick={() => {
-                  logout();
-                  onClose();
-                  navigate("/");
-                }}
-                className="w-full border border-red-500 text-red-500 py-2"
+              <li onClick={() => goTo("/women")} className={linkClass("/women")}>
+                <FiShoppingBag /> Women
+              </li>
+
+              <li
+                onClick={() => goTo("/fragrances")}
+                className={linkClass("/fragrances")}
               >
-                Logout
-              </button>
-            </div>
-          )}
+                <FiShoppingBag /> Fragrances
+              </li>
+            </ul>
+          </div>
 
-          {/* MENU VIEW */}
-          {view === "menu" && (
-            <>
-              {/* SHOP CATEGORIES */}
-              <div>
-                <h4 className="text-xs uppercase tracking-widest text-gray-400 mb-4">
-                  Shop
-                </h4>
-                <ul className="space-y-2">
-                  <li onClick={() => goTo("/men")} className={linkClass("/men")}>
-                    Men
-                  </li>
+          {/* Account */}
+          <div>
+            <p className="text-xs text-gray-400 uppercase mb-3">Account</p>
+
+            <ul className="space-y-1">
+              {user ? (
+                <>
                   <li
-                    onClick={() => goTo("/women")}
-                    className={linkClass("/women")}
+                    onClick={() => setView("profile")}
+                    className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer"
                   >
-                    Women
+                    <FiUser /> My Profile
                   </li>
+                  
+
                   <li
-                    onClick={() => goTo("/fragrances")}
-                    className={linkClass("/fragrances")}
+                    onClick={() => goTo("/my-orders")}
+                    className={linkClass("/my-orders")}
                   >
-                    Fragrances
+                    <FiPackage /> My Orders
                   </li>
-                </ul>
-              </div>
 
-              {/* USER ACCOUNT */}
-              <div>
-                <h4 className="text-xs uppercase tracking-widest text-gray-400 mb-4">
-                  Account
-                </h4>
-                <ul className="space-y-2">
-                  {user ? (
-                    <>
-                      <li
-                        onClick={() => setView("profile")}
-                        className="px-3 py-2 rounded cursor-pointer hover:bg-gray-100"
-                      >
-                        My Profile
-                      </li>
-                      <li
-                        onClick={() => goTo("/my-orders")}
-                        className={linkClass("/my-orders")}
-                      >
-                        My Orders
-                      </li>
-                      <li
-                        onClick={() => goTo("/cart")}
-                        className={linkClass("/cart")}
-                      >
-                        Cart
-                      </li>
-                    </>
-                  ) : (
-                    <li
-                      onClick={() => goTo("/login")}
-                      className={linkClass("/login")}
-                    >
-                      Login
-                    </li>
-                  )}
-                </ul>
-              </div>
-
-              {/* ADMIN SECTION */}
-              {isAdmin && (
-                <div>
-                  <h4 className="text-xs uppercase tracking-widest text-gray-400 mb-4">
-                    Admin
-                  </h4>
-                  <ul className="space-y-2">
-                    <li
-                      onClick={() => goTo("/admin/add-product")}
-                      className={linkClass("/admin/add-product")}
-                    >
-                      Add Product
-                    </li>
-                    <li
-                      onClick={() => goTo("/admin/products")}
-                      className={linkClass("/admin/products")}
-                    >
-                      Manage Products
-                    </li>
-                    <li
-                      onClick={() => goTo("/admin/orders")}
-                      className={linkClass("/admin/orders")}
-                    >
-                      Manage Orders
-                    </li>
-                  </ul>
-                </div>
+                  <li
+                    onClick={() => goTo("/cart")}
+                    className={linkClass("/cart")}
+                  >
+                    <FiShoppingCart /> Cart
+                  </li>
+                </>
+              ) : (
+                <li
+                  onClick={() => goTo("/login")}
+                  className={linkClass("/login")}
+                >
+                  <FiUser /> Login
+                </li>
               )}
-            </>
+            </ul>
+          </div>
+
+          {/* Admin */}
+          {isAdmin && (
+            <div>
+              <p className="text-xs text-gray-400 uppercase mb-3">Admin</p>
+
+              <ul className="space-y-1">
+                <li
+                  onClick={() => goTo("/admin/add-product")}
+                  className={linkClass("/admin/add-product")}
+                >
+                  <FiGrid /> Add Product
+                </li>
+
+                <li
+                  onClick={() => goTo("/admin/products")}
+                  className={linkClass("/admin/products")}
+                >
+                  <FiGrid /> Manage Products
+                </li>
+
+                <li
+                  onClick={() => goTo("/admin/orders")}
+                  className={linkClass("/admin/orders")}
+                >
+                  <FiGrid /> Manage Orders
+                </li>
+              </ul>
+            </div>
           )}
         </nav>
 
-        {/* FOOTER */}
-        <div className="absolute bottom-0 w-full px-6 py-4 border-t text-xs text-gray-500">
-          © {new Date().getFullYear()} Universal Trend
+        {/* Footer */}
+        <div className="border-t px-6 py-4 space-y-3">
+          {user && (
+            <button
+              onClick={() => {
+                logout();
+                navigate("/");
+                onClose();
+              }}
+              className="flex items-center justify-center gap-2 w-full py-2 rounded-md border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition"
+            >
+              <FiLogOut /> Logout
+            </button>
+          )}
+
+          <p className="text-xs text-gray-400 text-center">
+            © {new Date().getFullYear()} Universal Trend
+          </p>
         </div>
       </aside>
     </div>
