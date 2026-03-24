@@ -1,24 +1,34 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
-  {
-    name: String,
-    price: Number,
-    image: String,
-    category: String,
-    type: String, // men | women | fragrances
-    description: String,
-    image: {
-      type: String,
-      required: true,
-    },
+{
+  name: { type: String, required: true },
 
-    isPopular: {
-      type: Boolean,
-      default: false,
-    },
+  price: { type: Number, required: true },
+
+  category: { type: String, required: true },
+
+  type: {
+    type: String,
+    enum: ["men", "women", "fragrances"],
+    required: true
   },
-  { timestamps: true }
+
+  description: String,
+
+  images: [
+    {
+      type: String
+    }
+  ],
+
+  isPopular: {
+    type: Boolean,
+    default: false
+  }
+
+},
+{ timestamps: true }
 );
 
 export default mongoose.model("Product", productSchema);

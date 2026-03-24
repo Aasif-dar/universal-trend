@@ -1,34 +1,5 @@
-import twilio from "twilio";
 import nodemailer from "nodemailer";
 
-const client = twilio(
-  process.env.TWILIO_SID,
-  process.env.TWILIO_AUTH_TOKEN
-);
-
-// 📲 WhatsApp
-export const sendWhatsApp = async (order) => {
-  const message = `
-🛒 New Order Received!
-
-Name: ${order.user.name}
-Email: ${order.user.email}
-Total: ₹${order.total}
-
-Items:
-${order.items.map(
-  (i) => `- ${i.name} (${i.size}) x${i.quantity}`
-).join("\n")}
-`;
-
-  await client.messages.create({
-    from: process.env.TWILIO_WHATSAPP_FROM,
-    to: process.env.ADMIN_WHATSAPP,
-    body: message,
-  });
-};
-
-// 📧 Email
 export const sendEmail = async (order) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -38,21 +9,38 @@ export const sendEmail = async (order) => {
     },
   });
 
-  await transporter.sendMail({
-    from: `"Universal Trend" <${process.env.EMAIL_USER}>`,
-    to: process.env.EMAIL_USER,
-    subject: "🛒 New Order Received",
-    text: `
-New Order Details
+  const itemsList = order.items
+    .map(
+      (i) =>
+        `${i.name} x${i.quantity} - ₹${i.price}`
+    )
+    .join("\n");
 
-Customer: ${order.user.name}
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: process.env.EMAIL_USER, // 📩 YOU receive it
+    subject: "🛒 New Order - Universal Trend",
+    text: `
+New Order Received!
+
+Customer:
+Name: ${order.user.name}
 Email: ${order.user.email}
-Total: ₹${order.total}
+Phone: ${order.phone}
+
+Address:
+${order.address}
 
 Items:
-${order.items.map(
-  (i) => `${i.name} (${i.size}) x${i.quantity}`
-).join("\n")}
+${itemsList}
+
+Delivery Charge: ₹${order.deliveryCharge}
+Total Amount: ₹${order.total}
+
+Payment Method: ${order.paymentMethod}
+Order Status: ${order.status}
 `,
-  });
+  };
+
+  await transporter.sendMail(mailOptions);
 };
