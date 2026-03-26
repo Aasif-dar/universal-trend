@@ -38,7 +38,7 @@ useEffect(() => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const res = await customFetch.get("/products?type=men");
+      const res = await customFetch.get("/api/products?type=men");
 
       setProducts(res.data); // axios already gives JSON
     } catch (err) {

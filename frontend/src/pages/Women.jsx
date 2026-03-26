@@ -40,7 +40,7 @@ const Women = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const res = await customFetch.get("/products?type=women");
+      const res = await customFetch.get("/api/products?type=women");
 
       setProducts(res.data); // axios already gives JSON
     } catch (err) {
