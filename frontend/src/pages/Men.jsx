@@ -6,7 +6,7 @@ import MobileFilterDrawer from "../components/MobileFilterDrawer";
 import Footer from "../components/Footer";
 import adminCategories from "../data/adminCategories";
 import { useSearchParams } from "react-router-dom";
-
+import customFetch from "../utils/customFetch"; // adjust path
 const sortProducts = (products, sort) => {
   if (sort === "priceLowHigh")
     return [...products].sort((a, b) => a.price - b.price);
@@ -31,30 +31,25 @@ const Men = () => {
     urlCategory || "All"
   );
 
-  useEffect(() => {
-    if (urlCategory) setActiveCategory(urlCategory);
-  }, [urlCategory]);
-
+  
   // 🔹 FETCH FROM BACKEND
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          "http://localhost:5000/api/products?type=men"
-        );
-        const data = await res.json();
-        setProducts(data);
-      } catch (err) {
-        console.error("Fetch error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchProducts();
-  }, []);
+useEffect(() => {
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const res = await customFetch.get("/products?type=men");
 
+      setProducts(res.data); // axios already gives JSON
+    } catch (err) {
+      console.error("Fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProducts();
+}, []);
   // 🔹 FILTER
   const filtered = useMemo(() => {
     if (activeCategory === "All") return products;

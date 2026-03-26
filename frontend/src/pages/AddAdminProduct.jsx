@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { useAuth } from "../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import adminCategories from "../data/adminCategories";
-import { toast } from "react-toastify";
+import { toast } from "sonner"; 
+import customFetch from "../utils/customFetch";
 
 const AdminAddProduct = () => {
-  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [isPopular, setIsPopular] = useState(false);
   const [type, setType] = useState("");
@@ -29,62 +30,64 @@ const AdminAddProduct = () => {
     setImages([]);
     setIsPopular(false);
 
-    // reset file input
     document.getElementById("imageInput").value = "";
   };
 
   const submit = async (e) => {
     e.preventDefault();
 
+    // ✅ Validation
     if (!type || !category || images.length === 0) {
-      toast.error("All fields including images are required");
+      toast.error("Please fill all fields including images ❌");
       return;
     }
 
-    setLoading(true);
-
-    const data = new FormData();
-
-    data.append("name", form.name);
-    data.append("price", form.price);
-    data.append("description", form.description);
-    data.append("type", type);
-    data.append("category", category);
-    data.append("isPopular", isPopular);
-
-    for (let i = 0; i < images.length; i++) {
-      data.append("images", images[i]);
-    }
-
     try {
-      const res = await fetch(
-        "http://localhost:5000/api/admin/products",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-          body: data,
-        }
-      );
+      setLoading(true);
 
-      const result = await res.json();
+      const data = new FormData();
 
-      if (!res.ok) {
-        toast.error(result.message || "Failed to add product");
-        setLoading(false);
-        return;
+      data.append("name", form.name);
+      data.append("price", form.price);
+      data.append("description", form.description);
+      data.append("type", type);
+      data.append("category", category);
+      data.append("isPopular", isPopular);
+
+      for (let i = 0; i < images.length; i++) {
+        data.append("images", images[i]);
       }
 
-      toast.success("Product added successfully");
+      // ✅ API CALL
+      const res = await customFetch.post("/admin/products", data);
 
+      // ✅ SUCCESS TOAST
+      toast.success("Product added successfully 🎉");
+
+      // reset form
       resetForm();
-    } catch (error) {
-      console.log(error)
-      toast.error("Server error");
-    }
 
-    setLoading(false);
+    } catch (err) {
+      console.error("Add product error:", err);
+
+      // ❌ ERROR HANDLING
+      if (err.response?.status === 401) {
+        toast.error("Please login again 🔐");
+        navigate("/login");
+
+      } else if (err.response?.status === 403) {
+        toast.error("Access denied (Admin only) 🚫");
+        navigate("/");
+
+      } else {
+        toast.error(
+          err.response?.data?.message || "Failed to add product ❌"
+        );
+      }
+
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -166,7 +169,7 @@ const AdminAddProduct = () => {
             }
           />
 
-          {/* MULTIPLE IMAGE INPUT */}
+          {/* IMAGE INPUT */}
           <input
             id="imageInput"
             type="file"

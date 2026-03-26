@@ -1,19 +1,39 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import customFetch from "../utils/customFetch";
 
 const MyOrders = () => {
-  const { user } = useAuth();
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/orders/my", {
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then(setOrders);
-  }, []);
+    const fetchOrders = async () => {
+      try {
+        const res = await customFetch.get("/orders/my");
+        setOrders(res.data);
+      } catch (err) {
+        console.error("Fetch orders error:", err);
+
+        if (err.response?.status === 401) {
+          navigate("/login"); // 🔐 redirect if not logged in
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, [navigate]);
+
+  // ✅ Loading state
+  if (loading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        Loading orders...
+      </div>
+    );
+  }
 
   return (
     <section className="py-16 bg-gray-50">
@@ -51,10 +71,10 @@ const MyOrders = () => {
                 <p className="text-xs text-gray-400 mt-3">
                   {new Date(order.createdAt).toLocaleString()}
                 </p>
-                <p className="text-sm mt-2">
-                 Status: <b>{order.status}</b>
-                </p>
 
+                <p className="text-sm mt-2">
+                  Status: <b>{order.status}</b>
+                </p>
               </div>
             ))}
           </div>

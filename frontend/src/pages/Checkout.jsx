@@ -3,6 +3,7 @@ import { useCart } from "../Context/CartContext";
 import { useAuth } from "../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {toast} from "sonner"
+import customFetch from "../utils/customFetch";
 
 const Checkout = () => {
   const { cart, clearCart } = useCart();
@@ -33,54 +34,43 @@ const Checkout = () => {
   const total = subtotal + deliveryCharge;
 
   const placeOrder = async () => {
-    if (!form.phone || !form.address || !form.state) {
-      toast.warning("Please fill all delivery details");
-      return;
+  if (!form.phone || !form.address || !form.state) {
+    toast.warning("Please fill all delivery details");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const res = await customFetch.post("/orders", {
+      items: cart,
+      subtotal,
+      total,
+      address: form.address,
+      phone: form.phone,
+      state: form.state,
+      paymentMethod: form.payment,
+      deliveryCharge,
+    });
+
+    const data = res.data;
+
+    clearCart();
+    navigate(`/order-success/${data._id}`);
+
+  } catch (error) {
+    console.error(error);
+
+    if (error.response?.status === 401) {
+      toast.error("Please login again");
+    } else {
+      toast.error("Order failed");
     }
 
-    try {
-      setLoading(true);
-
-      const res = await fetch("http://localhost:5000/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-        body: JSON.stringify({
-          items: cart,
-          subtotal,
-          total,
-          address: form.address,
-          phone: form.phone,
-          state: form.state,
-          paymentMethod: form.payment,
-          deliveryCharge
-})
-      });
-
-      if (!res.ok) {
-        alert("Order failed");
-        setLoading(false);
-        return;
-      }
-
-      const data = await res.json();
-
-      clearCart();
-
-
-      navigate(`/order-success/${data._id}`);
-      console.log(data)
-      
-
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (cart.length === 0) {
     return (

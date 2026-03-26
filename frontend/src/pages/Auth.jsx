@@ -2,10 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
 import { toast } from "sonner";
+import customFetch from "../utils/customFetch";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -18,32 +21,36 @@ const Auth = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const url = isLogin
-      ? "http://localhost:5000/api/auth/login"
-      : "http://localhost:5000/api/auth/register";
+    try {
+      setLoading(true);
 
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+      const endpoint = isLogin ? "/auth/login" : "/auth/register";
 
-    const data = await res.json();
+      const res = await customFetch.post(endpoint, form);
+      const data = res.data;
 
-    if (!res.ok) {
-      alert(data.message || "Something went wrong");
-      return;
+      // ✅ SAVE USER + TOKEN
+      login({
+        token: data.token,
+        user: data.user,
+      });
+
+      toast.success(isLogin ? "Login Successful 🎉" : "Account Created 🎉");
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
+
+    } catch (err) {
+      console.error("Auth error:", err);
+
+      toast.error(
+        err.response?.data?.message || "Something went wrong"
+      );
+
+    } finally {
+      setLoading(false);
     }
-
-    // SAVE USER + TOKEN
-    login({
-      token: data.token,
-      user: data.user,
-    });
-    toast.success("Login Successful 🎉");
-    setTimeout(() => {
-      navigate("/");
-    }, 1500);
   };
 
   return (
@@ -78,7 +85,7 @@ const Auth = () => {
             required
           />
 
-          {/* Password with Show Button */}
+          {/* Password */}
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
@@ -99,7 +106,6 @@ const Auth = () => {
             </button>
           </div>
 
-          {/* Forgot Password (Only Login) */}
           {isLogin && (
             <p className="text-right text-sm text-blue-600 cursor-pointer hover:underline">
               Forgot Password?
@@ -108,9 +114,14 @@ const Auth = () => {
 
           <button
             type="submit"
-            className="w-full bg-black text-white py-2"
+            disabled={loading}
+            className="w-full bg-black text-white py-2 hover:bg-gray-800 transition"
           >
-            {isLogin ? "Login" : "Sign Up"}
+            {loading
+              ? "Processing..."
+              : isLogin
+              ? "Login"
+              : "Sign Up"}
           </button>
 
         </form>

@@ -1,14 +1,21 @@
 import { useCart } from "../Context/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 
+// ✅ Get base URL (remove /api)
+const BASE_URL = import.meta.env.VITE_API_URL.replace("/api", "");
+
 const Cart = () => {
   const { cart, updateQuantity, removeFromCart } = useCart();
   const navigate = useNavigate();
 
   const total = cart.reduce(
+    
     (sum, item) => sum + item.price * item.quantity,
     0
-  );
+  )
+  
+  ;
+
 
   if (cart.length === 0) {
     return (
@@ -17,6 +24,7 @@ const Cart = () => {
         <Link to="/" className="underline">
           Continue shopping
         </Link>
+       
       </section>
     );
   }
@@ -39,17 +47,21 @@ const Cart = () => {
                 className="flex gap-4 bg-white p-4 border rounded-lg"
               >
                 <img
-                  src={`http://localhost:5000${item.image}`}
+                  src={item.images?.[0]}
                   alt={item.name}
                   className="w-24 h-24 object-cover rounded"
-                />
+                  />
+              
+
                 <div className="flex-1">
                   <h3 className="font-medium">
                     {item.name}
                   </h3>
+
                   <p className="text-sm text-gray-500">
                     Size: {item.size}
                   </p>
+
                   <p className="font-semibold">
                     ₹{item.price}
                   </p>
@@ -64,7 +76,9 @@ const Cart = () => {
                     >
                       −
                     </button>
+
                     <span>{item.quantity}</span>
+
                     <button
                       onClick={() =>
                         updateQuantity(item.id, item.size, 1)
@@ -103,7 +117,7 @@ const Cart = () => {
 
             <button
               onClick={() => navigate("/checkout")}
-              className="w-full bg-black text-white py-2"
+              className="w-full bg-black text-white py-2 hover:bg-gray-800 transition"
             >
               Checkout
             </button>

@@ -1,29 +1,42 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import customFetch from "../utils/customFetch";
 
 const OrderSuccess = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
-  
-  const downloadInvoice = async () => {
 
-  const res = await fetch(
-    `http://localhost:5000/api/orders/${orderId}`
-  );
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const order = await res.json();
+  // ✅ Fetch order once
+  useEffect(() => {
+    const fetchOrder = async () => {
+      try {
+        const res = await customFetch.get(`/orders/${orderId}`);
+        setOrder(res.data);
+      } catch (err) {
+        console.error("Order fetch error:", err);
+        setOrder(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  window.open(order.invoiceUrl);
-};
+    fetchOrder();
+  }, [orderId]);
 
- const sendWhatsApp = async () => {
+  // ✅ Download invoice
+  const downloadInvoice = () => {
+    if (!order?.invoiceUrl) return;
+    window.open(order.invoiceUrl);
+  };
 
-  const res = await fetch(
-    `http://localhost:5000/api/orders/${orderId}`
-  );
+  // ✅ WhatsApp share
+  const sendWhatsApp = () => {
+    if (!order?.invoiceUrl) return;
 
-  const order = await res.json();
-
-  const message = `
+    const message = `
 🧾 Universal Trend Invoice
 
 Order ID: ${orderId}
@@ -32,14 +45,36 @@ Download your invoice:
 ${order.invoiceUrl}
 `;
 
-  const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+  };
 
-  window.open(url, "_blank");
-};
+  // ✅ Loading UI
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading order...
+      </div>
+    );
+  }
+
+  // ❌ Order not found
+  if (!order) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <p className="mb-4">Order not found</p>
+        <button
+          onClick={() => navigate("/")}
+          className="border px-4 py-2"
+        >
+          Go Home
+        </button>
+      </div>
+    );
+  }
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-gray-50">
-
       <div className="bg-white border rounded-xl p-10 max-w-lg text-center shadow-sm">
 
         <h1 className="text-3xl font-semibold mb-4">
@@ -81,7 +116,6 @@ ${order.invoiceUrl}
         </div>
 
       </div>
-
     </section>
   );
 };

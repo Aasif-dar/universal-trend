@@ -1,25 +1,35 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import customFetch from "../utils/customFetch";
 
 const AdminProducts = () => {
-  const { user } = useAuth();
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
+  // ✅ Fetch products
   const fetchProducts = async () => {
-    const res = await fetch("http://localhost:5000/api/admin/products", {
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
+    try {
+      const res = await customFetch.get("/admin/products");
+      setProducts(res.data);
+    } catch (err) {
+      console.error("Fetch products error:", err);
 
-    const data = await res.json();
-    setProducts(data);
+      if (err.response?.status === 401) {
+        navigate("/login"); // 🔐 not logged in
+      } else if (err.response?.status === 403) {
+        navigate("/"); // 🚫 not admin
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
+  // ✅ Delete product
   const deleteProduct = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this product?"
@@ -27,15 +37,28 @@ const AdminProducts = () => {
 
     if (!confirmDelete) return;
 
-    await fetch(`http://localhost:5000/api/admin/products/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
+    try {
+      await customFetch.delete(`/admin/products/${id}`);
 
-    setProducts((prev) => prev.filter((product) => product._id !== id));
+      // ✅ update UI
+      setProducts((prev) =>
+        prev.filter((product) => product._id !== id)
+      );
+
+    } catch (err) {
+      console.error("Delete error:", err);
+      alert("Failed to delete product");
+    }
   };
+
+  // ✅ Loading UI
+  if (loading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        Loading products...
+      </div>
+    );
+  }
 
   return (
     <section className="py-10 bg-gray-50">
@@ -65,14 +88,16 @@ const AdminProducts = () => {
                   <td className="p-3">{product.name}</td>
                   <td className="p-3">{product.category}</td>
                   <td className="p-3">₹{product.price}</td>
+
                   <td className="p-3">
                     {product.isPopular ? "Yes" : "No"}
                   </td>
 
                   <td className="p-3">
                     <img
-                      src={product.images[0]  }
+                      src={product.images?.[0]}
                       className="w-12 h-12 object-cover rounded"
+                      alt={product.name}
                     />
                   </td>
 
@@ -103,8 +128,9 @@ const AdminProducts = () => {
               <div className="flex gap-4">
 
                 <img
-                  src={product.images[0]}
+                  src={product.images?.[0]}
                   className="w-20 h-20 object-cover rounded"
+                  alt={product.name}
                 />
 
                 <div className="flex-1">

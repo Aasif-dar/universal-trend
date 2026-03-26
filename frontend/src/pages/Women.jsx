@@ -6,6 +6,7 @@ import MobileFilterDrawer from "../components/MobileFilterDrawer";
 import Footer from "../components/Footer";
 import adminCategories from "../data/adminCategories";
 import { useSearchParams } from "react-router-dom";
+import customFetch from "../utils/customFetch";
 
 const sortProducts = (products, sort) => {
   if (sort === "priceLowHigh")
@@ -36,24 +37,21 @@ const Women = () => {
 
   // 🔹 FETCH FROM BACKEND
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          "http://localhost:5000/api/products?type=women"
-        );
-        const data = await res.json();
-        setProducts(data);
-      } catch (err) {
-        console.error("Fetch error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const res = await customFetch.get("/products?type=women");
 
-    fetchProducts();
-  }, []);
+      setProducts(res.data); // axios already gives JSON
+    } catch (err) {
+      console.error("Fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  fetchProducts();
+}, []);
   // 🔹 FILTER
   const filtered = useMemo(() => {
     if (activeCategory === "All") return products;
