@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-import mongoose from "mongoose";  
 import cors from "cors";
 import morgan from "morgan";
 
@@ -17,11 +16,16 @@ import adminOrderRoutes from "./routes/admin/adminOrderRoutes.js";
 
 const app = express();
 
-// connect database
+// ✅ connect database
 connectDB();
 
+// ✅ CORS FIX (IMPORTANT)
+app.use(cors({
+  origin: "https://universaltrend.vercel.app", // your frontend URL
+  credentials: true
+}));
+
 // middlewares
-app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
@@ -38,11 +42,17 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/admin/products", adminProductRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 
+// health check route (IMPORTANT for Render)
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
+
 // debug route
 app.get("/test", (req, res) => {
   res.send("TEST OK");
 });
 
+// ✅ PORT (Render uses this)
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
