@@ -10,7 +10,7 @@ const AdminProducts = () => {
   // ✅ Fetch products
   const fetchProducts = async () => {
     try {
-      const res = await customFetch.get("/admin/products");
+      const res = await customFetch.get("/api/admin/products");
       setProducts(res.data);
     } catch (err) {
       console.error("Fetch products error:", err);
@@ -38,7 +38,7 @@ const AdminProducts = () => {
     if (!confirmDelete) return;
 
     try {
-      await customFetch.delete(`/admin/products/${id}`);
+      await customFetch.delete(`/api/admin/products/${id}`);
 
       // ✅ update UI
       setProducts((prev) =>

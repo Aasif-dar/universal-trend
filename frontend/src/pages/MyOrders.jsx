@@ -10,7 +10,7 @@ const MyOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await customFetch.get("/orders/my");
+        const res = await customFetch.get("/api/orders/my");
         setOrders(res.data);
       } catch (err) {
         console.error("Fetch orders error:", err);

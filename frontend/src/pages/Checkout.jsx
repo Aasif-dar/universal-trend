@@ -42,7 +42,7 @@ const Checkout = () => {
   try {
     setLoading(true);
 
-    const res = await customFetch.post("/orders", {
+    const res = await customFetch.post("/api/orders", {
       items: cart,
       subtotal,
       total,

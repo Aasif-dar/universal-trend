@@ -10,7 +10,7 @@ const AdminOrders = () => {
   // ✅ Fetch all orders
   const fetchOrders = async () => {
     try {
-      const res = await customFetch.get("/orders/allorders");
+      const res = await customFetch.get("/api/orders/allorders");
       setOrders(res.data);
     } catch (err) {
       console.error("Fetch orders error:", err);
@@ -32,7 +32,7 @@ const AdminOrders = () => {
   // ✅ Mark order as delivered
   const markDelivered = async (orderId) => {
     try {
-      await customFetch.put(`/orders/${orderId}/status`, {
+      await customFetch.put(`/api/orders/${orderId}/status`, {
         status: "Delivered",
       });
 

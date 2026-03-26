@@ -59,7 +59,7 @@ const AdminAddProduct = () => {
       }
 
       // ✅ API CALL
-      const res = await customFetch.post("/admin/products", data);
+      const res = await customFetch.post("/api/admin/products", data);
 
       // ✅ SUCCESS TOAST
       toast.success("Product added successfully 🎉");
