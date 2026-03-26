@@ -18,7 +18,7 @@ const PopularProducts = () => {
   useEffect(() => {
     const fetchPopular = async () => {
       try {
-        const res = await customFetch.get("/products/popular");
+        const res = await customFetch.get("/api/products/popular");
         const data = res.data;
 
         setProducts(Array.isArray(data) ? data : []);
