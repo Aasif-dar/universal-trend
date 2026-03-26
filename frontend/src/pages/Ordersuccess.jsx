@@ -13,7 +13,7 @@ const OrderSuccess = () => {
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const res = await customFetch.get(`/orders/${orderId}`);
+        const res = await customFetch.get(`/api/orders/${orderId}`);
         setOrder(res.data);
       } catch (err) {
         console.error("Order fetch error:", err);

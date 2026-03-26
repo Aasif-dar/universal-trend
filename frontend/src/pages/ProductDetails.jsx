@@ -142,7 +142,7 @@ const ProductDetails = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res  = await customFetch.get(`/products/${id}`);
+        const res  = await customFetch.get(`/api/products/${id}`);
         const data = res.data;
         setProduct(data);
         if (data.images?.length > 0) setMainImage(data.images[0]);
