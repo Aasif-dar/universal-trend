@@ -4,6 +4,7 @@ const orderItemSchema = new mongoose.Schema({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
+    required: true,
   },
   name: String,
   price: Number,
@@ -58,8 +59,10 @@ const orderSchema = new mongoose.Schema(
       default: "cod",
     },
 
+    // ✅ optional (for future use)
     invoiceUrl: {
       type: String,
+      default: "",
     },
 
     status: {
