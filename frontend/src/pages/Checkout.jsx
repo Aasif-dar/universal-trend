@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useCart } from "../Context/CartContext";
 import { useAuth } from "../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import {toast} from "sonner"
+import { toast } from "sonner";
 import customFetch from "../utils/customFetch";
 
 const Checkout = () => {
@@ -34,43 +34,51 @@ const Checkout = () => {
   const total = subtotal + deliveryCharge;
 
   const placeOrder = async () => {
-  if (!form.phone || !form.address || !form.state) {
-    toast.warning("Please fill all delivery details");
-    return;
-  }
-
-  try {
-    setLoading(true);
-
-    const res = await customFetch.post("/api/orders", {
-      productId: cart,
-      subtotal,
-      total,
-      address: form.address,
-      phone: form.phone,
-      state: form.state,
-      paymentMethod: form.payment,
-      deliveryCharge,
-    });
-
-    const data = res.data;
-
-    clearCart();
-    navigate(`/order-success/${data._id}`);
-
-  } catch (error) {
-    console.error(error);
-
-    if (error.response?.status === 401) {
-      toast.error("Please login again");
-    } else {
-      toast.error("Order failed");
+    if (!form.phone || !form.address || !form.state) {
+      toast.warning("Please fill all delivery details");
+      return;
     }
 
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      setLoading(true);
+
+      // ✅ FIXED: proper items structure
+      const res = await customFetch.post("/api/orders", {
+        items: cart.map((item) => ({
+          productId: item._id || item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          size: item.size,
+          image: item.images?.[0] || item.image,
+        })),
+        subtotal,
+        total,
+        address: form.address,
+        phone: form.phone,
+        state: form.state,
+        paymentMethod: form.payment,
+        deliveryCharge,
+      });
+
+      const data = res.data;
+
+      clearCart();
+      navigate(`/order-success/${data._id}`);
+
+    } catch (error) {
+      console.error(error);
+
+      if (error.response?.status === 401) {
+        toast.error("Please login again");
+      } else {
+        toast.error("Order failed");
+      }
+
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (cart.length === 0) {
     return (
@@ -86,7 +94,6 @@ const Checkout = () => {
 
         {/* DELIVERY FORM */}
         <div className="bg-white p-8 border rounded-xl shadow-sm">
-
           <h2 className="text-2xl font-semibold mb-6">
             Delivery Details
           </h2>
@@ -107,7 +114,7 @@ const Checkout = () => {
           />
 
           <input
-            placeholder="State (example: Kashmir)"
+            placeholder="State (example: Kashmir(Free Delivery With In Kashmir))"
             className="border w-full px-4 py-3 rounded-md mb-6"
             value={form.state}
             onChange={(e) => handleChange("state", e.target.value)}
@@ -130,18 +137,15 @@ const Checkout = () => {
             <input type="radio" disabled />
             Online Payment (Coming Soon)
           </label>
-
         </div>
 
         {/* ORDER SUMMARY */}
         <div className="bg-white p-8 border rounded-xl shadow-sm h-fit sticky top-24">
-
           <h2 className="text-2xl font-semibold mb-6">
             Order Summary
           </h2>
 
           <div className="space-y-4 mb-6">
-
             {cart.map((item) => (
               <div
                 key={`${item.id}-${item.size}`}
@@ -172,7 +176,6 @@ const Checkout = () => {
               <span>Total</span>
               <span>₹{total}</span>
             </div>
-
           </div>
 
           <button
@@ -182,7 +185,6 @@ const Checkout = () => {
           >
             {loading ? "Placing Order..." : "Place Order"}
           </button>
-
         </div>
 
       </div>
