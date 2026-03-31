@@ -26,7 +26,7 @@
         const [progress, setProgress] = useState(0);
         const timerRef  = useRef(null);
         const progRef   = useRef(null);
-        const DURATION  = 5000;
+        const DURATION  = 3000;
 
         const startTimers = () => {
           clearTimeout(timerRef.current);
