@@ -1,15 +1,15 @@
-import shirtImage from "../assets/shirtcategory.png"
-import shortsImage from "../assets/shortsimage.png"
-import womenSweater from "../assets/womensweater.png"
-import menshoes from "../assets/menshoes.png"
-import mensTshirt from "../assets/menTshirt.png"
-import deodrentsandattars from "../assets/deodrentsandattars.png"
-import mensJeans from "../assets/mensjeans.png"
-import mensJacktes from "../assets/mensjacket.png"
-import mensHoodies from "../assets/mensHoodie.png"
-import Accessories from "../assets/accessories.png"
-import WomensBags from "../assets/womensBags.png"
-import WomenShoes from "../assets/womensShoes.png"
+import shirtImage from "../assets/shirtcategory.webp"
+import shortsImage from "../assets/shortsimage.webp"
+import womenSweater from "../assets/womensweater.webp"
+import menshoes from "../assets/menshoes.webp"
+import mensTshirt from "../assets/menTshirt.webp"
+import deodrentsandattars from "../assets/deodrentsandattars.webp"
+import mensJeans from "../assets/mensjeans.webp"
+import mensJacktes from "../assets/mensjacket.webp"
+import mensHoodies from "../assets/mensHoodie.webp"
+import Accessories from "../assets/accessories.webp"
+import WomensBags from "../assets/womensBags.webp"
+import WomenShoes from "../assets/womensShoes.webp"
 const categories = [
   {
     id: 1,
@@ -35,13 +35,13 @@ const categories = [
     path: "/men",
     category: "Uppers",
   },
-  {
+    {
     id: 4,
-    title: "Women's Sweaters",
-    subtitle: "Winter Collection",
-    image: womenSweater,
-    path: "/women",
-    category: "Sweaters",
+    title: "Accessories",
+    subtitle: "Caps & Belts ",
+    image: Accessories,
+    path: "/men",
+    category: "Accessories",
   },
   {
     id: 5,
@@ -91,21 +91,21 @@ const categories = [
     path: "/fragrances",
     category: "All",
   },
-   {
-    id: 11,
-    title: "Accessories",
-    subtitle: "Caps & Belts ",
-    image: Accessories,
-    path: "/men",
-    category: "Accessories",
-  },
   {
-    id: 12,
+    id: 11,
     title: "Women's Shoes",
     subtitle: "Style that speaks with every step",
     image: WomenShoes,
     path: "/women",
     category: "Bags",
+  },
+    {
+    id: 12,
+    title: "Women's Sweaters",
+    subtitle: "Winter Collection",
+    image: womenSweater,
+    path: "/women",
+    category: "Sweaters",
   },
 ];
 

@@ -1,7 +1,7 @@
-import hero1 from "../assets/men.png.webp";
-import hero2 from "../assets/sechero.jpg";
-import hero3 from "../assets/thirdhero.jpg";
-import hero4 from "../assets/fourthHero.png"
+import hero1 from "../assets/men.webp";
+import hero2 from "../assets/sechero.webp";
+import hero3 from "../assets/thirdhero.webp";
+import hero4 from "../assets/fourthHero.webp"
 
 const heroSlides = [
   {
