@@ -1,4 +1,4 @@
-import { Instagram, Facebook, MessageCircle } from "lucide-react";
+import { Instagram, Facebook, MessageCircle, Linkedin } from "lucide-react";
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,200;0,300;0,400;1,200;1,300&family=Outfit:wght@200;300;400;500;600&display=swap');
@@ -26,6 +26,49 @@ const styles = `
 
   .ft-contact-item { text-decoration:none; }
   .ft-contact-item:hover .ft-contact-val { color:rgba(245,240,232,0.82); }
+
+  /* ── Developer card ── */
+  .ft-dev-card {
+    position: relative;
+    border: 1px solid rgba(212,175,55,0.12);
+    background: rgba(255,255,255,0.02);
+    backdrop-filter: blur(4px);
+    overflow: hidden;
+    transition: border-color .4s ease;
+  }
+  .ft-dev-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform .5s ease;
+  }
+  .ft-dev-card:hover::before { transform: scaleX(1); }
+  .ft-dev-card:hover { border-color: rgba(212,175,55,0.28); }
+
+  .ft-dev-social {
+    width: 30px; height: 30px;
+    border: 1px solid rgba(212,175,55,0.2);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(245,240,232,0.35);
+    text-decoration: none;
+    transition: border-color .3s, color .3s, transform .3s;
+    border-radius: 2px;
+    position: relative; overflow: hidden;
+  }
+  .ft-dev-social::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(212,175,55,0.08);
+    transform: scaleY(0); transform-origin: bottom;
+    transition: transform .35s ease;
+  }
+  .ft-dev-social:hover::before { transform: scaleY(1); }
+  .ft-dev-social:hover { border-color: rgba(212,175,55,0.6); color: #d4af37; transform: translateY(-2px); }
+  .ft-dev-social span { position: relative; z-index: 1; }
 `;
 
 const Footer = () => {
@@ -56,7 +99,7 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 pb-12 mb-14 border-b border-[rgba(212,175,55,0.1)]">
             <div>
               <span className="block font-outfit text-[9px] font-normal tracking-[0.38em] uppercase text-[rgba(212,175,55,0.5)] mb-3">
-                Est. 2012 · Jammu & Kashmir
+                Est. 2012 · Jammu &amp; Kashmir
               </span>
               <h2 className="font-cormorant m-0 font-extralight text-[#f5f0e8] leading-none"
                 style={{ fontSize: "clamp(38px,5vw,62px)", letterSpacing: "0.02em" }}>
@@ -88,9 +131,9 @@ const Footer = () => {
               <div className="ft-col-label">Connect</div>
               <div className="flex flex-col gap-5 mb-8">
                 {[
-                  { label: "Email", value: "universaltrendkralpora@gmail.com", href: "mailto:universaltrendkralpora@gmail.com" },
-                  { label: "WhatsApp", value: "+91 7006298380", href: "https://wa.me/917006298380" },
-                  { label: "Address", value: "Kralpora,Srinagar J&K, India", href: "" },
+                  { label: "Email",     value: "universaltrendkralpora@gmail.com", href: "mailto:universaltrendkralpora@gmail.com" },
+                  { label: "WhatsApp",  value: "+91 7006298380",                   href: "https://wa.me/917006298380" },
+                  { label: "Address",   value: "Kralpora, Srinagar J&K, India",    href: "" },
                 ].map(({ label, value, href }) => (
                   <a key={label} href={href} className="ft-contact-item flex flex-col gap-1">
                     <span className="font-outfit text-[9px] font-medium tracking-[0.25em] uppercase text-[rgba(212,175,55,0.5)]">
@@ -103,11 +146,10 @@ const Footer = () => {
                 ))}
               </div>
 
-              {/* Social icons */}
               <div className="flex gap-2.5">
                 {[
                   { icon: <Instagram size={14} />, label: "Instagram" },
-                  { icon: <Facebook size={14} />, label: "Facebook" },
+                  { icon: <Facebook size={14} />,  label: "Facebook"  },
                   { icon: <MessageCircle size={14} />, label: "WhatsApp" },
                 ].map(({ icon, label }) => (
                   <a key={label} href="#" aria-label={label}
@@ -122,7 +164,6 @@ const Footer = () => {
             <div>
               <div className="ft-col-label">Visit Us</div>
               <div className="ft-map-wrap relative border border-[rgba(212,175,55,0.14)] overflow-hidden rounded-sm">
-                {/* Corner brackets */}
                 {[
                   "top-0 left-0 border-t border-l",
                   "top-0 right-0 border-t border-r",
@@ -165,7 +206,7 @@ const Footer = () => {
           </div>
 
           {/* ── Bottom bar ── */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 flex-wrap">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 flex-wrap mb-8">
             <span className="font-outfit text-[11px] font-light text-[rgba(245,240,232,0.22)] tracking-wide">
               © {year}{" "}
               <span className="text-[rgba(212,175,55,0.45)] font-normal">Universal Trend</span>
@@ -185,6 +226,61 @@ const Footer = () => {
                 <a key={l} href="#" className="ft-policy">{l}</a>
               ))}
             </div>
+          </div>
+
+          {/* ── Developer credit ── */}
+          <div className="ft-dev-card rounded-sm px-5 py-4 flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4">
+
+            {/* Left: label + name */}
+            <div className="flex items-center gap-4">
+              {/* Small diamond accent */}
+              <div className="w-px h-8 flex-shrink-0"
+                style={{ background: "linear-gradient(to bottom, transparent, rgba(212,175,55,0.4), transparent)" }} />
+              <div>
+                <span className="block font-outfit text-[8px] font-medium tracking-[0.3em] uppercase text-[rgba(212,175,55,0.45)] mb-0.5">
+                  Designed &amp; Developed by
+                </span>
+                <span className="font-cormorant text-[18px] font-light text-[rgba(245,240,232,0.65)] tracking-wide italic">
+                  Asif Manzoor
+                </span>
+              </div>
+            </div>
+
+            {/* Right: social links */}
+            <div className="flex items-center gap-3">
+              <span className="font-outfit text-[8px] font-normal tracking-[0.2em] uppercase text-[rgba(212,175,55,0.3)] hidden sm:block">
+                Find me on
+              </span>
+              {/* Instagram */}
+              <a
+                href="https://www.instagram.com/asif_dar5?igsh=aHJmcWRiOXJiZzBi"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Asif Manzoor Instagram"
+                className="ft-dev-social"
+              >
+                <span><Instagram size={13} /></span>
+              </a>
+              {/* LinkedIn */}
+              <a
+                href="https://www.linkedin.com/in/asifmanzoor2002"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Asif Manzoor LinkedIn"
+                className="ft-dev-social"
+              >
+                <span><Linkedin size={13} /></span>
+              </a>
+
+              {/* Name tag — subtle pill */}
+              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 border border-[rgba(212,175,55,0.12)] rounded-sm">
+                <div className="w-1 h-1 rounded-full bg-[rgba(212,175,55,0.4)]" />
+                <span className="font-outfit text-[9px] font-light tracking-[0.15em] text-[rgba(245,240,232,0.2)]">
+                  @asif_dar5
+                </span>
+              </div>
+            </div>
+
           </div>
 
         </div>
