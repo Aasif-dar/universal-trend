@@ -35,7 +35,7 @@ const categories = [
     path: "/men",
     category: "Uppers",
   },
-    {
+    { 
     id: 4,
     title: "Accessories",
     subtitle: "Caps & Belts ",

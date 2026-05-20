@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState } from "react";
+import { toast } from "sonner";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -18,6 +19,8 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    toast.error("Logged out successfully");
+
     // ❌ DO NOT clear cart here
   };
 
