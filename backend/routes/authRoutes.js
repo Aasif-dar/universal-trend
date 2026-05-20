@@ -157,33 +157,40 @@ router.post("/login", async (req, res) => {
    Body: { email }
 ───────────────────────────────────────── */
 router.post("/forgot-password", async (req, res) => {
+
   try {
+
     const { email } = req.body;
-    if (!email)
-      return res.status(400).json({ message: "Email is required" });
 
     const user = await User.findOne({ email });
-    // Always respond success to prevent email enumeration
-    if (!user)
-      return res.json({ message: "If this email exists, an OTP has been sent." });
 
-    await OTP.deleteMany({ email, type: "reset" });
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
 
-    const otp = generateOTP();
-    await OTP.create({
-      email,
-      otp,
-      type: "reset",
-      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+    const otp = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    user.resetOTP = otp;
+
+    await user.save();
+
+    await sendOTPEmail(email, otp);
+
+    return res.json({
+      message: "OTP sent successfully",
     });
 
-    await sendOTPEmail(email, otp, "reset");
+  } catch (err) {
 
-    res.json({ message: "If this email exists, an OTP has been sent." });
+    console.log(err);
 
-  } catch (error) {
-    console.error("FORGOT-PASSWORD ERROR:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Server error",
+    });
   }
 });
 
