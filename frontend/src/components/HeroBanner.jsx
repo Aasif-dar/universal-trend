@@ -1,5 +1,6 @@
       import { useEffect, useState, useRef } from "react";
       import heroSlides from "../data/herodata";
+      import { useNavigate } from "react-router-dom";
 
       const styles = `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,200;0,300;0,400;1,200;1,300&family=Outfit:wght@200;300;400;500&display=swap');
@@ -27,6 +28,7 @@
         const timerRef  = useRef(null);
         const progRef   = useRef(null);
         const DURATION  = 3000;
+        const navigate = useNavigate();
 
         const startTimers = () => {
           clearTimeout(timerRef.current);
@@ -105,25 +107,32 @@
                   </p>
 
                   {/* CTA */}
-                  <div className="hb-rise-4 flex items-center gap-5 flex-wrap">
-                    <a href="/men"
-                      className="hb-btn-primary relative overflow-hidden inline-flex items-center gap-3 px-8 py-3.5 bg-[#d4af37] text-[#0a0a0a] font-outfit text-[10px] font-semibold tracking-[0.26em] uppercase no-underline cursor-pointer"
-                      style={{transition:"gap .35s ease"}}>
-                      <span className="relative z-10">Shop Now</span>
-                      <svg className="relative z-10" width="13" height="9" viewBox="0 0 13 9" fill="none">
-                        <path d="M8.5 1L12 4.5M12 4.5L8.5 8M12 4.5H1" stroke="#0a0a0a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </a>
-                    {/* <a href="/collections"
-                      className="hb-btn-ghost inline-flex items-center gap-2 pb-2 bg-transparent font-outfit text-[10px] font-normal tracking-[0.2em] uppercase no-underline cursor-pointer text-[rgba(245,240,232,0.6)]">
-                      Explore All
-                      <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
-                        <path d="M7 1L10 4.5M10 4.5L7 8M10 4.5H1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </a> */}
+                  <button
+                  onClick={() => navigate("/men")}
+                  className="hb-btn-primary relative overflow-hidden inline-flex items-center gap-3 px-8 py-3.5 bg-[#d4af37] text-[#0a0a0a] font-outfit text-[10px] font-semibold tracking-[0.26em] uppercase border-none cursor-pointer"
+                  style={{ transition: "gap .35s ease" }}>
+                    <span className="relative z-10">
+                      Shop Now
+                      </span>
+
+  <svg
+    className="relative z-10"
+    width="13"
+    height="9"
+    viewBox="0 0 13 9"
+    fill="none"
+  >
+    <path
+      d="M8.5 1L12 4.5M12 4.5L8.5 8M12 4.5H1"
+      stroke="#0a0a0a"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                 
                   </div>
                 </div>
-              </div>
 
               {/* Ghost slide counter */}
               <div className="absolute bottom-20 right-16 z-20 pointer-events-none hidden md:flex items-baseline gap-1">
