@@ -386,7 +386,6 @@ const Auth = () => {
   const handleSendResetOTP = async (e) => {
     e.preventDefault();
 
-       console.log("clicked");
     try {
       setLoading(true);
 
