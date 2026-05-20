@@ -21,9 +21,15 @@ connectDB();
 
 // ✅ CORS FIX (IMPORTANT)
 app.use(cors({
-  origin: "https://universaltrend.vercel.app", // your frontend URL
-  credentials: true
+  origin: ['https://universaltrend.vercel.app',
+          'http://localhost:5173',
+  ] 
+
 }));
+
+
+   console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
 
 // middlewares
 app.use(express.json());
