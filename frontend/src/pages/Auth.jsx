@@ -386,6 +386,7 @@ const Auth = () => {
   const handleSendResetOTP = async (e) => {
     e.preventDefault();
 
+       console.log("clicked");
     try {
       setLoading(true);
 
@@ -586,21 +587,23 @@ const Auth = () => {
             className="flex flex-col gap-4"
           >
             <input
-              className="auth-input"
-              type="email"
-              placeholder="Email address"
-              value={resetEmail}
-              onChange={(e) =>
-                setResetEmail(e.target.value)
-              }
-            />
+  className="auth-input"
+  type="email"
+  placeholder="Email address"
+  value={resetEmail}
+  required
+  onChange={(e) =>
+    setResetEmail(e.target.value)
+  }
+/>
 
             <button
-              type="submit"
-              className="auth-btn"
+            type="submit"
+            disabled={loading}
+            className="auth-btn"
             >
-              Send Reset OTP
-            </button>
+              {loading ? "Sending..." : "Send Reset OTP"}
+              </button>
 
             <button
               type="button"
