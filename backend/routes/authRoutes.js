@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import User from "../models/User.js";
-import OTP from "../models/OTP.js";
+import OTP from "../models/Otp.js";
 import { sendOTPEmail } from "../utils/sendEmail.js";
 
 const router = express.Router();
