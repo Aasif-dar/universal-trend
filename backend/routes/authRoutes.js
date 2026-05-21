@@ -157,7 +157,6 @@ router.post("/login", async (req, res) => {
    Body: { email }
 ───────────────────────────────────────── */
 router.post("/forgot-password", async (req, res) => {
-
   try {
 
     const { email } = req.body;
@@ -170,30 +169,48 @@ router.post("/forgot-password", async (req, res) => {
       });
     }
 
-    const otp = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
+    // delete previous OTPs
+    await OTP.deleteMany({
+      email,
+      type: "reset",
+    });
 
-    user.resetOTP = otp;
+    // generate OTP
+    const otp = generateOTP();
 
-    await user.save();
+    // save OTP in OTP collection
+    await OTP.create({
+      email,
+      otp,
+      type: "reset",
+      expiresAt: new Date(
+        Date.now() + 10 * 60 * 1000
+      ),
+    });
 
-    await sendOTPEmail(email, otp);
+    // send email
+    await sendOTPEmail(
+      email,
+      otp,
+      "reset"
+    );
 
     return res.json({
       message: "OTP sent successfully",
     });
 
-  } catch (err) {
+  } catch (error) {
 
-    console.log(err);
+    console.error(
+      "FORGOT PASSWORD ERROR:",
+      error
+    );
 
     res.status(500).json({
       message: "Server error",
     });
   }
 });
-
 /* ─────────────────────────────────────────
    FORGOT PASSWORD STEP 2 — verify OTP + set new password
    POST /api/auth/reset-password
